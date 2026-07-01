@@ -221,7 +221,7 @@ ad_VolCons(north) ==  F                            ! northern boundary
 
 ! Time-Stepping parameters.
 
-      NTIMES == 2000
+      NTIMES == 15120
           DT == 40.0d0
      NDTFAST == 20
 
@@ -577,7 +577,7 @@ Hout(idRVzs) == F       ! rvorticity_slice   relative  vorticity depth slices
 
 Hout(idzslT) == F F     ! temp_slice, ...    temperature and salinity depth slices
 
-Hout(idpthR) == F       ! z_rho              time-varying depths of RHO-points
+Hout(idpthR) == T       ! z_rho              time-varying depths of RHO-points
 Hout(idpthU) == F       ! z_u                time-varying depths of U-points
 Hout(idpthV) == F       ! z_v                time-varying depths of V-points
 Hout(idpthW) == F       ! z_w                time-varying depths of W-points
@@ -655,8 +655,8 @@ Hout(idTdif) == F       ! AKt                vertical T-diffusion
 Hout(idSdif) == F       ! AKs                vertical Salinity diffusion
 Hout(idHsbl) == F       ! Hsbl               depth of surface boundary layer
 Hout(idHbbl) == F       ! Hbbl               depth of bottom boundary layer
-Hout(idMtke) == F       ! tke                turbulent kinetic energy
-Hout(idMtls) == F       ! gls                turbulent length scale
+Hout(idMtke) == T       ! tke                turbulent kinetic energy
+Hout(idMtls) == T       ! gls                turbulent length scale
 
 ! Logical switches (TRUE/FALSE) to activate writing of extra inert passive
 ! tracers other than biological and sediment tracers into the HISTORY
@@ -665,7 +665,7 @@ Hout(idMtls) == F       ! gls                turbulent length scale
 ! dyes, pollutants, oil spills, etc. NPT values are expected. However, these
 ! switches can be activated using compact parameter specification.
 
- Hout(inert) == T       ! dye_01, ...        inert passive tracers
+ Hout(inert) == F       ! dye_01, ...        inert passive tracers
  Hout(Znert) == F       ! dye_01_slice, ...  inert tracer constant depth slices
 
 ! Logical switches (TRUE/FALSE) to activate writing of fields into
