@@ -25,7 +25,7 @@
 /* MIXING (from norkyst) */
 #define UV_VIS2            /* turn ON Laplacian horizontal mixing */
 #define TS_DIF2            /* turn ON Laplacian horizontal mixing */
-#undef TS_MIX_STABILITY   /* weighting diffusion between two time levels */ 
+#undef TS_MIX_STABILITY    /* weighting diffusion between two time levels */ 
 
 #define MIX_GEO_TS         /* mixing on geopotential (constant Z) surfaces */
 #define MIX_S_UV           /* mixing on model surfaces */
@@ -44,3 +44,12 @@
 #define CHARNOK           /* Charnok surface roughness from wind stress */
 #undef  K_C4ADVECTION
 
+
+/* OTHER (from romsmix and upwelling) */
+#define ANA_GRID
+#define ANA_INITIAL
+#define ANA_SMFLUX
+#define ANA_STFLUX
+#define ANA_SSFLUX
+#define ANA_BTFLUX
+#define ANA_BSFLUX

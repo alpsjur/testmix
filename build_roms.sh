@@ -215,7 +215,7 @@ export     MY_PROJECT_DIR=${PWD}
 #export      MY_CPP_FLAGS="${MY_CPP_FLAGS} -DAVERAGES"
 #export      MY_CPP_FLAGS="${MY_CPP_FLAGS} -DNESTING"
 #export      MY_CPP_FLAGS="${MY_CPP_FLAGS} -DDEBUGGING"
- export      MY_CPP_FLAGS="${MY_CPP_FLAGS} -DBULK_FLUXES"
+#export      MY_CPP_FLAGS="${MY_CPP_FLAGS} -DBULK_FLUXES"
 #export      MY_CPP_FLAGS="${MY_CPP_FLAGS} -DVERIFICATION"
 #export      MY_CPP_FLAGS="${MY_CPP_FLAGS} -DSTATIONS"
 #export      MY_CPP_FLAGS="${MY_CPP_FLAGS} -DDUMMY_WEATHER"
@@ -227,8 +227,8 @@ export     MY_PROJECT_DIR=${PWD}
 #export      MY_CPP_FLAGS="${MY_CPP_FLAGS} -DNOTIDES"
 #export      MY_CPP_FLAGS="${MY_CPP_FLAGS} -DASSEMBLE_ALLREDUCE"
 #export      MY_CPP_FLAGS="${MY_CPP_FLAGS} -DREDUCE_ALLREDUCE"
- export      MY_CPP_FLAGS="${MY_CPP_FLAGS} -DREDUCE_ALLGATHER" 
- export      MY_CPP_FLAGS="${MY_CPP_FLAGS} -DCOLLECT_ALLREDUCE"
+#export      MY_CPP_FLAGS="${MY_CPP_FLAGS} -DREDUCE_ALLGATHER" 
+#export      MY_CPP_FLAGS="${MY_CPP_FLAGS} -DCOLLECT_ALLREDUCE"
 #export      MY_CPP_FLAGS="${MY_CPP_FLAGS} -DBOUNDARY_ALLREDUCE"
 #export      MY_CPP_FLAGS="${MY_CPP_FLAGS} -DPARALLEL_IO"
 #export      MY_CPP_FLAGS="${MY_CPP_FLAGS} -DPIO_LIB"
@@ -325,9 +325,9 @@ fi
 # customized biology model header file (like fennel.h, nemuro.h, ecosim.h,
 # etc).
 
- export     MY_HEADER_DIR=${MY_PROJECT_DIR}
+ export     MY_HEADER_DIR=${MY_PROJECT_DIR}/Include
 
- export MY_ANALYTICAL_DIR=${MY_PROJECT_DIR}
+ export MY_ANALYTICAL_DIR=${MY_PROJECT_DIR}/Functionals
 
 # Put the binary to execute in the following directory.
 

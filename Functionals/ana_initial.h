@@ -262,7 +262,7 @@
 !  Set initial conditions for potential temperature (Celsius) and
 !  salinity (PSU).
 !
-# if defined UPWELLING
+# if defined TESTMIX
       DO k=1,N(ng)
         DO j=JstrT,JendT
           DO i=IstrT,IendT

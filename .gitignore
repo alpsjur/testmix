@@ -1,0 +1,9 @@
+# data files
+*.nc
+
+# log files
+*.log
+
+# ROMS
+Build_roms
+romsS
