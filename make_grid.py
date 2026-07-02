@@ -259,9 +259,11 @@ def write_grid(output, str_a_value, depth_zero_below):
                 'y-locations of V-points', 'meter')
 
         # 3D structure frontal area density
+        # NOTE: _FillValue must NOT be 0.0 — ROMS masks any value where
+        # ABS(val) >= ABS(_FillValue). Use a large sentinel instead.
         v = ds.createVariable('str_a', 'f8',
                               ('s_rho', 'eta_rho', 'xi_rho'),
-                              fill_value=0.0)
+                              fill_value=9.99e+36)
         v.long_name  = 'structure frontal area density'
         v.units      = 'meter-1'
         v.valid_min  = np.float64(0.0)
