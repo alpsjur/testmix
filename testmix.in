@@ -363,6 +363,11 @@ LtracerSponge == F F                            ! temperature, salinity, inert
     GLS_SIGK == 0.8d0
     GLS_SIGP == 1.07d0
 
+! Structure drag parameters (STRUCTURE_DRAG).
+
+      STR_CD == 1.0d0                           ! structure drag coefficient
+      GLS_C4 == 1.0d0                           ! GLS production coefficient
+
 ! Constants used in surface turbulent kinetic energy flux computation.
 
   CHARNOK_ALPHA == 1000.0d0         ! Charnock surface roughness
@@ -1095,7 +1100,7 @@ PIO_I2C_Preq = 65                 ! Maximum pending I2C requests
 
 ! Input NetCDF file names, [1:Ngrids].
 
-     GRDNAME == roms_grd.nc
+     GRDNAME == testmix_grd.nc
      ININAME == roms_ini.nc
      ITLNAME == roms_itl.nc
      IRPNAME == roms_irp.nc

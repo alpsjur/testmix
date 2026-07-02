@@ -46,10 +46,13 @@
 
 
 /* OTHER (from romsmix and upwelling) */
-#define ANA_GRID
+#undef  ANA_GRID
 #define ANA_INITIAL
 #define ANA_SMFLUX
 #define ANA_STFLUX
 #define ANA_SSFLUX
 #define ANA_BTFLUX
 #define ANA_BSFLUX
+
+/* Structure drag parametrization */
+#define STRUCTURE_DRAG
