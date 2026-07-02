@@ -72,7 +72,7 @@ def compute_z_w(ds, tidx):
     if vtrans == 1:
         z_w = hc * s3 + (h3 - hc) * Cs3 + z3 * (1.0 + s3)
     else:   # Vtransform = 2
-        z_w = (hc * s3 + h3 * Cs3) / (hc + h3) * (h3 + z3) - h3
+        z_w = (hc * s3 + h3 * Cs3) / (hc + h3) * (h3 + z3)
     return z_w
 
 
