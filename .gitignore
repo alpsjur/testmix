@@ -4,6 +4,9 @@
 # log files
 *.log
 
+# figures 
+figs/*
+
 # ROMS
 Build_roms
-romsS
+romsS*

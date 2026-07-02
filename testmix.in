@@ -221,7 +221,7 @@ ad_VolCons(north) ==  F                            ! northern boundary
 
 ! Time-Stepping parameters.
 
-      NTIMES == 15120
+      NTIMES == 6048   ! 60480 for month
           DT == 40.0d0
      NDTFAST == 20
 
@@ -365,8 +365,8 @@ LtracerSponge == F F                            ! temperature, salinity, inert
 
 ! Structure drag parameters (STRUCTURE_DRAG).
 
-      STR_CD == 1.0d0                           ! structure drag coefficient
-      GLS_C4 == 1.0d0                           ! GLS production coefficient
+      STR_CD == 0.63d0                            ! structure drag coefficient
+      GLS_C4 == 0.6d0                             ! GLS production coefficient
 
 ! Constants used in surface turbulent kinetic energy flux computation.
 
