@@ -3,6 +3,7 @@
 
 # log files
 *.log
+__pycache__
 
 # figures 
 figs/*
@@ -10,3 +11,4 @@ figs/*
 # ROMS
 Build_roms
 romsS*
+
