@@ -3,7 +3,7 @@
 # Columns:
 #   xi_index   - 0-based column index (xi direction)
 #   eta_index  - 0-based row index    (eta direction)
-#   str_a      - structure frontal area density [m^-1]
+#   str_a      - structure area density [m^-1]
 #   depth      - depth extent of structure [m, positive downward from surface]
 #                use -1 to extend through the entire water column
 #

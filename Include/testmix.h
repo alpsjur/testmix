@@ -55,4 +55,4 @@
 #define ANA_BSFLUX
 
 /* Structure drag parametrization */
-#define STRUCTURE_DRAG
+#undef STRUCTURE_MIX

@@ -5,7 +5,7 @@
 # applies str_a_input_example.txt to the copy so the original is untouched.
 #
 # Vertical coordinate parameters match typical NorKyst settings:
-#   Vtransform=2, Vstretching=5, theta_s=5.0, theta_b=4.0, hc=50.0, N=35
+#   Vtransform=2, Vstretching=5, theta_s=5.0, theta_b=4.0, hc=100.0, N=40
 # Adjust if your run configuration differs.
 
 set -e
@@ -19,10 +19,10 @@ cp "${GRID_IN}" "${GRID_OUT}"
 
 echo "Running add_str_a.py ..."
 python3 add_str_a.py "${GRID_OUT}" "${INPUT_FILE}" \
-    --N 35          \
+    --N 40          \
     --theta_s 5.0   \
     --theta_b 4.0   \
-    --hc 50.0       \
+    --hc 100.0       \
     --vtransform 2  \
     --vstretching 5
 

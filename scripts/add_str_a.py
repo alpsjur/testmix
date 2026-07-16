@@ -2,7 +2,7 @@
 """
 add_str_a.py  –  Add or update the str_a variable in a ROMS grid NetCDF file.
 
-str_a is the structure frontal area density (m⁻¹), a 3D field on
+str_a is the structure area density (m⁻¹), a 3D field on
 (s_rho, eta_rho, xi_rho) used by the STRUCTURE_MIXING parametrization.
 ROMS applies drag wherever str_a > 0, scaled with str_a.
 
@@ -354,7 +354,7 @@ def main():
                 'str_a', 'f8',
                 ('s_rho', 'eta_rho', 'xi_rho'),
                 fill_value=9.99e+36)
-            str_a_var.long_name = 'structure frontal area density'
+            str_a_var.long_name = 'structure area density'
             str_a_var.units     = 'meter-1'
             str_a_var.valid_min = np.float64(0.0)
             str_a_var[:]        = 0.0
