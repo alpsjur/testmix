@@ -144,6 +144,28 @@
           BOUNDARY(ng)%vbar_east(j)=V0_geo
         END DO
       END IF
+
+      IF (LBC(isouth,isUbar,ng)%acquire.and.                            &
+     &    LBC(isouth,isVbar,ng)%acquire.and.                            &
+     &    DOMAIN(ng)%Southern_Edge(tile)) THEN
+        DO i=IstrP,IendT
+          BOUNDARY(ng)%ubar_south(i)=0.0_r8
+        END DO
+        DO i=IstrT,IendT
+          BOUNDARY(ng)%vbar_south(i)=V0_geo
+        END DO
+      END IF
+
+      IF (LBC(inorth,isUbar,ng)%acquire.and.                            &
+     &    LBC(inorth,isVbar,ng)%acquire.and.                            &
+     &    DOMAIN(ng)%Northern_Edge(tile)) THEN
+        DO i=IstrP,IendT
+          BOUNDARY(ng)%ubar_north(i)=0.0_r8
+        END DO
+        DO i=IstrT,IendT
+          BOUNDARY(ng)%vbar_north(i)=V0_geo
+        END DO
+      END IF
 #else
       IF (LBC(ieast,isUbar,ng)%acquire.and.                             &
      &    LBC(ieast,isVbar,ng)%acquire.and.                             &
