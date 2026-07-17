@@ -171,6 +171,19 @@
 !  Initial conditions for 2D momentum (m/s) components.
 !-----------------------------------------------------------------------
 !
+# ifdef TESTMIX
+!  Geostrophic initial condition: ubar=0, vbar=V0 (northward)
+      DO j=JstrT,JendT
+        DO i=IstrP,IendT
+          ubar(i,j,1)=0.0_r8
+        END DO
+      END DO
+      DO j=JstrP,JendT
+        DO i=IstrT,IendT
+          vbar(i,j,1)=0.15_r8
+        END DO
+      END DO
+# else
       DO j=JstrT,JendT
         DO i=IstrP,IendT
           ubar(i,j,1)=0.0_r8
@@ -181,6 +194,7 @@
           vbar(i,j,1)=0.0_r8
         END DO
       END DO
+# endif
 !
 !  Report statistics.
 !
@@ -203,11 +217,21 @@
 !  Initial conditions for free-surface (m).
 !-----------------------------------------------------------------------
 !
+# ifdef TESTMIX
+!  Geostrophic SSH slope in x: eta(x) = (f0*V0/g) * x
+!  f0=1.263e-4 rad/s, V0=0.15 m/s, g=9.81 m/s2 => slope~1.931e-6 m/m
+      DO j=JstrT,JendT
+        DO i=IstrT,IendT
+          zeta(i,j,1)=1.931e-6_r8*xr(i,j)
+        END DO
+      END DO
+# else
       DO j=JstrT,JendT
         DO i=IstrT,IendT
           zeta(i,j,1)=0.0_r8
         END DO
       END DO
+# endif
 !
 !  Report statistics.
 !
@@ -225,6 +249,21 @@
 !  Initial conditions for 3D momentum components (m/s).
 !-----------------------------------------------------------------------
 !
+# ifdef TESTMIX
+!  Geostrophic initial condition: u=0, v=V0 (depth-uniform)
+      DO k=1,N(ng)
+        DO j=JstrT,JendT
+          DO i=IstrP,IendT
+            u(i,j,k,1)=0.0_r8
+          END DO
+        END DO
+        DO j=JstrP,JendT
+          DO i=IstrT,IendT
+            v(i,j,k,1)=0.15_r8
+          END DO
+        END DO
+      END DO
+# else
       DO k=1,N(ng)
        DO j=JstrT,JendT
          DO i=IstrP,IendT
@@ -237,6 +276,7 @@
           END DO
         END DO
       END DO
+# endif
 !
 !  Report statistics.
 !

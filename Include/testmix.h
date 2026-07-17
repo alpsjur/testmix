@@ -53,6 +53,8 @@
 #define ANA_SSFLUX
 #define ANA_BTFLUX
 #define ANA_BSFLUX
+#define ANA_FSOBC          /* analytical free-surface OBC at W/E open boundaries */
+#define ANA_M2OBC          /* analytical 2D momentum OBC at W/E open boundaries */
 
 /* Structure drag parametrization */
 #define STRUCTURE_MIXING
