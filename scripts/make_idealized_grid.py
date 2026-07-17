@@ -35,8 +35,8 @@ except ImportError:
 # ---------------------------------------------------------------------------
 # Testmix grid parameters — must match testmix.in
 # ---------------------------------------------------------------------------
-LM      = 10          # Interior rho-points in xi
-MM      = 12          # Interior rho-points in eta
+LM      = 22          # Interior rho-points in xi
+MM      = 40          # Interior rho-points in eta
 N       = 40          # Vertical rho-levels
 H0      = 150.0       # Uniform depth (m, positive downward)
 DX      = 800.0       # Grid spacing in xi (m)
