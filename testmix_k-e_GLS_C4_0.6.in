@@ -221,7 +221,7 @@ ad_VolCons(north) ==  F                            ! northern boundary
 
 ! Time-Stepping parameters.
 
-      NTIMES == 120960   ! 60480 for month
+      NTIMES == 241920   ! 60480 for month
           DT == 40.0d0
      NDTFAST == 20
 
@@ -1197,7 +1197,7 @@ PIO_I2C_Preq = 65                 ! Maximum pending I2C requests
      DAINAME == output/roms_dai.nc
      GSTNAME == output/roms_gst.nc
      RSTNAME == output/roms_rst.nc
-     HISNAME == output/roms_his.nc
+     HISNAME == output/k-e_GLS_C4_0.6_his.nc
      XTRNAME == output/roms_xtr.nc
      QCKNAME == output/roms_qck.nc
      TLMNAME == output/roms_tlm.nc

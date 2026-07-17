@@ -221,7 +221,7 @@ ad_VolCons(north) ==  F                            ! northern boundary
 
 ! Time-Stepping parameters.
 
-      NTIMES == 241920  ! 60480 for month
+      NTIMES == 241920   ! 60480 for month
           DT == 40.0d0
      NDTFAST == 20
 
@@ -349,9 +349,9 @@ LtracerSponge == F F                            ! temperature, salinity, inert
 
 ! Generic length-scale turbulence closure parameters.
 
-       GLS_P == 2.0d0                           ! Generic
-       GLS_M == 1.0d0
-       GLS_N == -0.67d0
+       GLS_P == 3.0d0                           ! k - epsilon
+       GLS_M == 1.5d0
+       GLS_N == -1d0
     GLS_Kmin == 1.0d-8
     GLS_Pmin == 1.0d-8
 
@@ -366,7 +366,8 @@ LtracerSponge == F F                            ! temperature, salinity, inert
 ! Structure drag and mixing parameters (STRUCTURE_MIXING).
 
       STR_CD == 0.63d0                            ! structure drag coefficient
-      GLS_C4 == 0.6
+!     GLS_C4 == 0.6d0                             ! strong mixing
+      GLS_C4 == 1.4d0                             ! weak mixing
 
 ! Constants used in surface turbulent kinetic energy flux computation.
 
@@ -1196,7 +1197,7 @@ PIO_I2C_Preq = 65                 ! Maximum pending I2C requests
      DAINAME == output/roms_dai.nc
      GSTNAME == output/roms_gst.nc
      RSTNAME == output/roms_rst.nc
-     HISNAME == output/roms_his.nc
+     HISNAME == output/k-e_GLS_C4_1.4_his.nc
      XTRNAME == output/roms_xtr.nc
      QCKNAME == output/roms_qck.nc
      TLMNAME == output/roms_tlm.nc
