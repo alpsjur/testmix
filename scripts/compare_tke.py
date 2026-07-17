@@ -20,16 +20,13 @@ def compute_volume_average_xarray(file_path):
         tke = dataset["tke"]  # Select the TKE variable
         
         # Compute the volume average over 'x', 'y', and 'depth'
-        # Adjust the dimension names if they are different in your dataset
         volume_avg_tke = tke.mean(dim=["s_w", "eta_rho", "xi_rho"])
         
-        # Convert to a NumPy array (optional, for plotting)
-        volume_avg_tke_array = volume_avg_tke.values
         
         # Close the dataset
         dataset.close()
         
-        return volume_avg_tke #_array
+        return volume_avg_tke
     except Exception as e:
         print(f"Error processing file {file_path}: {e}")
         return None
@@ -60,8 +57,7 @@ def main():
         fig, ax = plt.subplots(figsize=(10, 6))
 
         for label, time_series in time_series_data:
-            print(time_series.ocean_time)
-            ax.plot(time_series.ocean_time, time_series, label=label)
+            ax.plot(time_series, label=label)
         
         ax.set_xlabel("Time Step")
         ax.set_ylabel("TKE")

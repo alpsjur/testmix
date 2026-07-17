@@ -38,7 +38,7 @@ def main():
     baseline_file2 = "output/k-e_nostr_his.nc"
     
     # Parameterized files
-    GLS_C4_VALUES = np.arange(0.2, 1.55, 0.1)
+    GLS_C4_VALUES = [0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0, 1.1, 1.2, 1.3, 1.4, 1.5]
     param_file_pattern = "output/gen_str_GLS_C4_{GLS_C4}_his.nc"
     reference_file = "output/gen_nostr_his.nc"
     
