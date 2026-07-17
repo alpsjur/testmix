@@ -12,3 +12,6 @@ figs/*
 Build_roms
 romsS*
 
+# system spesific
+qsub.sh
+
