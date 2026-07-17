@@ -184,7 +184,7 @@ ad_Vadvection == C4       \                     ! temperature
 
    LBC(isFsur) ==   Cha     Cha     Cha     Cha         ! free-surface        W S E N
    LBC(isUbar) ==   Fla     Rad     Fla     Rad         ! 2D U-momentum       W S E N
-   LBC(isVbar) ==   Rad     Fla     Rad     Fla         ! 2D V-momentum       W S E N
+   LBC(isVbar) ==   Rad     Fla     Rad     Rad         ! 2D V-momentum       W S E N
    LBC(isUvel) ==   Rad     Rad     Rad     Rad         ! 3D U-momentum       W S E N
    LBC(isVvel) ==   Rad     Rad     Rad     Rad         ! 3D V-momentum       W S E N
    LBC(isMtke) ==   Rad     Rad     Rad     Rad         ! mixing TKE          W S E N
