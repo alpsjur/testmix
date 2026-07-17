@@ -95,6 +95,20 @@
           BOUNDARY(ng)%zeta_east(j)=ssh_slope*GRID(ng)%xr(Iend+1,j)
         END DO
       END IF
+
+      IF (LBC(isouth,isFsur,ng)%acquire.and.                            &
+     &    DOMAIN(ng)%Southern_Edge(tile)) THEN
+        DO i=IstrT,IendT
+          BOUNDARY(ng)%zeta_south(i)=ssh_slope*GRID(ng)%xr(i,Jstr-1)
+        END DO
+      END IF
+
+      IF (LBC(inorth,isFsur,ng)%acquire.and.                            &
+     &    DOMAIN(ng)%Northern_Edge(tile)) THEN
+        DO i=IstrT,IendT
+          BOUNDARY(ng)%zeta_north(i)=ssh_slope*GRID(ng)%xr(i,Jend+1)
+        END DO
+      END IF
 #else
       IF (LBC(ieast,isFsur,ng)%acquire.and.                             &
      &    DOMAIN(ng)%Eastern_Edge(tile)) THEN

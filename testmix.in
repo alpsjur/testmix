@@ -182,14 +182,14 @@ ad_Vadvection == C4       \                     ! temperature
 !                   1       2       3       4
 
 
-   LBC(isFsur) ==   Cha     Per     Cha     Per         ! free-surface
-   LBC(isUbar) ==   Fla     Per     Fla     Per         ! 2D U-momentum
-   LBC(isVbar) ==   Rad     Per     Rad     Per         ! 2D V-momentum
-   LBC(isUvel) ==   Rad     Per     Rad     Per         ! 3D U-momentum
-   LBC(isVvel) ==   Rad     Per     Rad     Per         ! 3D V-momentum
-   LBC(isMtke) ==   Rad     Per     Rad     Per         ! mixing TKE
-   LBC(isTvar) ==   Rad     Per     Rad     Per \       ! temperature
-                    Rad     Per     Rad     Per         ! salinity
+   LBC(isFsur) ==   Cha     Cha     Cha     Cha         ! free-surface        W S E N
+   LBC(isUbar) ==   Fla     Rad     Fla     Rad         ! 2D U-momentum       W S E N
+   LBC(isVbar) ==   Rad     Fla     Rad     Fla         ! 2D V-momentum       W S E N
+   LBC(isUvel) ==   Rad     Rad     Rad     Rad         ! 3D U-momentum       W S E N
+   LBC(isVvel) ==   Rad     Rad     Rad     Rad         ! 3D V-momentum       W S E N
+   LBC(isMtke) ==   Rad     Rad     Rad     Rad         ! mixing TKE          W S E N
+   LBC(isTvar) ==   Rad     Rad     Rad     Rad \       ! temperature         W S E N
+                    Rad     Rad     Rad     Rad         ! salinity
 
 ! Adjoint-based algorithms can have different lateral boundary
 ! conditions keywords.
