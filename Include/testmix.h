@@ -57,4 +57,4 @@
 #define ANA_M2OBC          /* analytical 2D momentum OBC at W/E open boundaries */
 
 /* Structure drag parametrization */
-#undef STRUCTURE_MIXING
+#define STRUCTURE_MIXING

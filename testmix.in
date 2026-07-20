@@ -91,8 +91,8 @@ GridsInLayer =  1
 ! Grid dimension parameters. See notes below in the Glossary for how to set
 ! these parameters correctly.
 
-          Lm == 22               ! Number of I-direction INTERIOR RHO-points
-          Mm == 40               ! Number of J-direction INTERIOR RHO-points
+          Lm == 30               ! Number of I-direction INTERIOR RHO-points
+          Mm == 32               ! Number of J-direction INTERIOR RHO-points
            N == 40                 ! Number of vertical levels
 
         Nbed =  0             ! Number of sediment bed layers
@@ -182,13 +182,13 @@ ad_Vadvection == C4       \                     ! temperature
 !                   1       2       3       4
 
 
-   LBC(isFsur) ==   Cla     Cla     Cla     Cla         ! free-surface        W S E N
-   LBC(isUbar) ==   Fla     Rad     Fla     Rad         ! 2D U-momentum       W S E N
-   LBC(isVbar) ==   Rad     Fla     Rad     Rad         ! 2D V-momentum       W S E N
-   LBC(isUvel) ==   Rad     Rad     Rad     Rad         ! 3D U-momentum       W S E N
-   LBC(isVvel) ==   Rad     Rad     Rad     Rad         ! 3D V-momentum       W S E N
-   LBC(isMtke) ==   Rad     Rad     Rad     Rad         ! mixing TKE          W S E N
-   LBC(isTvar) ==   Rad     Rad     Rad     Rad \       ! temperature         W S E N
+   LBC(isFsur) ==   Cha     Cla     Cha     Cha         ! free-surface        
+   LBC(isUbar) ==   Fla     Cla     Fla     Fla         ! 2D U-momentum       
+   LBC(isVbar) ==   Fla     Cla     Fla     Fla         ! 2D V-momentum       
+   LBC(isUvel) ==   Rad     Rad     Rad     Rad         ! 3D U-momentum       
+   LBC(isVvel) ==   Rad     Rad     Rad     Rad         ! 3D V-momentum       
+   LBC(isMtke) ==   Rad     Rad     Rad     Rad         ! mixing TKE          
+   LBC(isTvar) ==   Rad     Rad     Rad     Rad \       ! temperature         
                     Rad     Rad     Rad     Rad         ! salinity
 
 ! Adjoint-based algorithms can have different lateral boundary
@@ -366,7 +366,7 @@ LtracerSponge == F F                            ! temperature, salinity, inert
 ! Structure drag and mixing parameters (STRUCTURE_MIXING).
 
       STR_CD == 0.63d0                            ! structure drag coefficient
-      GLS_C4 == 0.6
+      GLS_C4 == 0.2
 
 ! Constants used in surface turbulent kinetic energy flux computation.
 
@@ -655,11 +655,11 @@ Hout(idevap) == F       ! evaporation        evaporation rate
 Hout(idrain) == F       ! rain               precipitation rate
 
 Hout(idDano) == T       ! rho                density anomaly
-Hout(idVvis) == F       ! AKv                vertical viscosity
-Hout(idTdif) == F       ! AKt                vertical T-diffusion
-Hout(idSdif) == F       ! AKs                vertical Salinity diffusion
-Hout(idHsbl) == F       ! Hsbl               depth of surface boundary layer
-Hout(idHbbl) == F       ! Hbbl               depth of bottom boundary layer
+Hout(idVvis) == T       ! AKv                vertical viscosity
+Hout(idTdif) == T       ! AKt                vertical T-diffusion
+Hout(idSdif) == T       ! AKs                vertical Salinity diffusion
+Hout(idHsbl) == T       ! Hsbl               depth of surface boundary layer
+Hout(idHbbl) == T       ! Hbbl               depth of bottom boundary layer
 Hout(idMtke) == T       ! tke                turbulent kinetic energy
 Hout(idMtls) == T       ! gls                turbulent length scale
 
@@ -1002,7 +1002,7 @@ Dout(iTvdif) == T T     ! temp_vdiff, ...    vertical diffusion
 ! file size manageable. Order "Z_SLICE" in descending values (surface to
 ! bottom).
 
-      NSLICE =  2
+      NSLICE =  0
      Z_SLICE =  0.0d0 -10.0d0
 
 ! Generic User parameters, [1:NUSER].
@@ -1196,7 +1196,7 @@ PIO_I2C_Preq = 65                 ! Maximum pending I2C requests
      DAINAME == output/roms_dai.nc
      GSTNAME == output/roms_gst.nc
      RSTNAME == output/roms_rst.nc
-     HISNAME == output/roms_his.nc
+     HISNAME == output/gen_str_C4_0.2_his.nc
      XTRNAME == output/roms_xtr.nc
      QCKNAME == output/roms_qck.nc
      TLMNAME == output/roms_tlm.nc
