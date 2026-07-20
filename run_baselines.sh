@@ -68,13 +68,13 @@ for experiment in "${EXPERIMENTS[@]}"; do
             ;;
         "k-e_str_weak")
             echo "Running k-e turbulence with weak structure-induced mixing..."
-            modify_input_file "k-e" "true" 1.4 "output/k-e_str_weak_his.nc"
-            ./romsS_str < $BASE_INPUT_FILE > "logs/k-e_str_weak.log"
+            modify_input_file "k-e" "true" 1.4 "output/k-e_str_C4_1.4_his.nc"
+            ./romsS_str < $BASE_INPUT_FILE > "logs/k-e_str_C4_1.4.log"
             ;;
         "k-e_str_strong")
             echo "Running k-e turbulence with strong structure-induced mixing..."
-            modify_input_file "k-e" "true" 0.6 "output/k-e_str_strong_his.nc"
-            ./romsS_str < $BASE_INPUT_FILE > "logs/k-e_str_strong.log"
+            modify_input_file "k-e" "true" 0.6 "output/k-e_str_C4_0.6_his.nc"
+            ./romsS_str < $BASE_INPUT_FILE > "logs/k-e_str_C4_0.6.log"
             ;;
     esac
 
