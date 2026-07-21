@@ -3,7 +3,7 @@ import subprocess
 
 def main():
     # Define paths and options for compare_var.py
-    compare_var_script = "scripts/compare_var.py"
+    compare_var_script = "analysis/compare_var.py"
     files = [
         "output/k-e_nostr_his.nc",
         "output/gen_nostr_his.nc",
@@ -11,7 +11,7 @@ def main():
         "output/k-e_str_C4_0.6_his.nc"
     ]
     xy_file = "input/idealized_grid_input.txt"
-    variable = "rho" 
+    variable = "AKt" 
 
     # Command for running compare_var.py
     compare_var_command = [
@@ -26,8 +26,8 @@ def main():
     subprocess.run(compare_var_command)
 
     # Define paths and options for compare_dvar.py
-    compare_dvar_script = "scripts/compare_dvar.py"
-    variable = "rho" 
+    compare_dvar_script = "analysis/compare_dvar.py"
+    variable = "AKt" 
     baseline_file1 = "output/k-e_str_C4_0.6_his.nc"
     baseline_file2 = "output/k-e_nostr_his.nc"
     param_file_pattern = "output/gen_str_C4_{GLS_C4}_his.nc"
