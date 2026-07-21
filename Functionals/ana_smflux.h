@@ -435,16 +435,31 @@
           END DO
         END DO
       END IF
-#elif defined TESTMIX
-!  Geostrophic test: no wind forcing.
-      DO j=JstrP,JendT
-        DO i=IstrT,IendT
-          svstr(i,j)=0.0_r8
+#elif defined TESTMIX_WIND
+      IF (NSperiodic(ng)) THEN
+        IF ((tdays(ng)-dstart).le.2.0_r8) THEN
+          windamp=0.25_r8*SIN(pi*(tdays(ng)-dstart)/4.0_r8)/rho0
+        ELSE
+          windamp=0.25_r8/rho0
+        END IF
+        DO j=JstrP,JendT
+          DO i=IstrT,IendT
+            svstr(i,j)=windamp
 # ifdef TL_IOMS
-          tl_svstr(i,j)=0.0_r8
+            tl_svstr(i,j)=windamp
 # endif
+          END DO
         END DO
-      END DO
+      ELSE IF (EWperiodic(ng)) THEN
+        DO j=JstrP,JendT
+          DO i=IstrT,IendT
+            svstr(i,j)=0.0_r8
+# ifdef TL_IOMS
+            tl_svstr(i,j)=0.0_r8
+# endif
+          END DO
+        END DO
+      END IF
 #else
       DO j=JstrP,JendT
         DO i=IstrT,IendT

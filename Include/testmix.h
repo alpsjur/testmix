@@ -7,7 +7,7 @@
 **
 ** Options for Test Mix.
 **
-** Application flag:   TESTMIX
+** Application flag:   TESTMIX_WIND or TESTMIX_CURRENT
 ** Input script:       testmix.in
 */
 
@@ -46,7 +46,6 @@
 
 
 /* OTHER (from romsmix and upwelling) */
-#undef  ANA_GRID
 #define ANA_INITIAL
 #define ANA_SMFLUX
 #define ANA_STFLUX

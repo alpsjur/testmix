@@ -116,7 +116,7 @@
 !  2D momentum open boundary conditions.
 !-----------------------------------------------------------------------
 !
-#if defined TESTMIX
+#if defined TESTMIX_CURRENT
 !
 !  Geostrophic current: ubar=0 (no cross-boundary flow),
 !                       vbar=V0 (northward along-boundary flow)

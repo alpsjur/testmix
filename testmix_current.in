@@ -64,11 +64,11 @@
 !
 ! Application title.
 
-       TITLE = Testing extended mixing scheme
+       TITLE = Testing extended mixing scheme with imposed currents
 
 ! C-preprocessing Flag.
 
-    MyAppCPP = TESTMIX
+    MyAppCPP = TESTMIX_CURRENT
 
 ! Input variable information file name.  This file needs to be processed
 ! first so all information arrays can be initialized properly.
@@ -366,7 +366,7 @@ LtracerSponge == F F                            ! temperature, salinity, inert
 ! Structure drag and mixing parameters (STRUCTURE_MIXING).
 
       STR_CD == 0.63d0                            ! structure drag coefficient
-      GLS_C4 == 0.2
+      GLS_C4 == 0.6
 
 ! Constants used in surface turbulent kinetic energy flux computation.
 
@@ -1196,7 +1196,7 @@ PIO_I2C_Preq = 65                 ! Maximum pending I2C requests
      DAINAME == output/roms_dai.nc
      GSTNAME == output/roms_gst.nc
      RSTNAME == output/roms_rst.nc
-     HISNAME == output/gen_str_C4_0.2_his.nc
+     HISNAME == output/roms_his.nc
      XTRNAME == output/roms_xtr.nc
      QCKNAME == output/roms_qck.nc
      TLMNAME == output/roms_tlm.nc
