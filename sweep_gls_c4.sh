@@ -4,7 +4,7 @@
 GLS_C4_VALUES=(0.2 0.3 0.4 0.5 0.6 0.7 0.8 0.9 1.0 1.1 1.2 1.3 1.4 1.5)
 
 # Base input file
-BASE_INPUT_FILE="testmix_current.in"
+BASE_INPUT_FILE="testmix.in"
 
 # Backup the original input file
 cp $BASE_INPUT_FILE "${BASE_INPUT_FILE}.bak"

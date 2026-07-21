@@ -74,7 +74,7 @@
 !  Free-surface open boundary conditions.
 !-----------------------------------------------------------------------
 !
-#if defined TESTMIX_CURRENT
+#if defined TESTMIX
 !
 !  Geostrophic balance: deta/dx = f0*V0/g
 !  f0 = 1.263e-4 rad/s, V0 = 0.15 m/s, g = 9.81 m/s2

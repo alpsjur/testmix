@@ -64,11 +64,11 @@
 !
 ! Application title.
 
-       TITLE = Testing extended mixing scheme
+       TITLE = Testing extended mixing scheme driven by surface stress
 
 ! C-preprocessing Flag.
 
-    MyAppCPP = TESTMIX_WIND
+    MyAppCPP = TESTMIX
 
 ! Input variable information file name.  This file needs to be processed
 ! first so all information arrays can be initialized properly.

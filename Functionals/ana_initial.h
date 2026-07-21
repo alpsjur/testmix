@@ -171,7 +171,7 @@
 !  Initial conditions for 2D momentum (m/s) components.
 !-----------------------------------------------------------------------
 !
-# ifdef TESTMIX_CURRENT
+# ifdef TESTMIX
 !  Geostrophic initial condition: ubar=0, vbar=V0 (northward)
       DO j=JstrT,JendT
         DO i=IstrP,IendT
@@ -217,7 +217,7 @@
 !  Initial conditions for free-surface (m).
 !-----------------------------------------------------------------------
 !
-# ifdef TESTMIX_CURRENT
+# ifdef TESTMIX
 !  Geostrophic SSH slope in x: eta(x) = (f0*V0/g) * x
 !  f0=1.263e-4 rad/s, V0=0.15 m/s, g=9.81 m/s2 => slope~1.931e-6 m/m
       DO j=JstrT,JendT
@@ -249,7 +249,7 @@
 !  Initial conditions for 3D momentum components (m/s).
 !-----------------------------------------------------------------------
 !
-# ifdef TESTMIX_CURRENT
+# ifdef TESTMIX
 !  Geostrophic initial condition: u=0, v=V0 (depth-uniform)
       DO k=1,N(ng)
         DO j=JstrT,JendT
@@ -302,7 +302,7 @@
 !  Set initial conditions for potential temperature (Celsius) and
 !  salinity (PSU).
 !
-# if defined(TESTMIX_WIND) || defined(TESTMIX_CURRENT)
+# ifdef TESTMIX
       DO k=1,N(ng)
         DO j=JstrT,JendT
           DO i=IstrT,IendT
