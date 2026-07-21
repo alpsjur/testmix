@@ -7,21 +7,24 @@ from utils import compute_volume_average
 
 """
 Usage:
-    python compare_dvar.py --variable <variable_name> --baseline_file1 <file1.nc> --baseline_file2 <file2.nc>
-                           --param_file_pattern <pattern> --reference_file <file.nc> [--gls_c4_values <values>]
+    python compare_dvar.py --variable <variable_name> 
+                           --baseline_reference <baseline_reference_file.nc> 
+                           --baseline_parametrized <baseline_file1.nc> <baseline_file2.nc> ...
+                           --reference <reference_file.nc> 
+                           --parametrized <param_file1.nc> <param_file2.nc> ...
                            [--xy_file <xy_file.txt>]
 
 Examples:
-    # Compute ΔTKE for baseline files and parameterized files with default GLS_C4 values
+    # Compute ΔTKE for multiple baseline_parametrized and parametrized files
     python compare_dvar.py --variable tke \
-                           --baseline_file1 output/k-e_str_C4_1.4_his.nc \
-                           --baseline_file2 output/k-e_nostr_his.nc \
-                           --param_file_pattern "output/gen_str_C4_{GLS_C4}_his.nc" \
-                           --reference_file output/gen_nostr_his.nc \
+                           --baseline_reference output/k-e_nostr_his.nc \
+                           --baseline_parametrized output/k-e_str_C4_1.4_his.nc output/k-e_str_C4_0.6_his.nc \
+                           --reference output/gen_nostr_his.nc \
+                           --parametrized output/gen_str_C4_1.0_his.nc output/gen_str_C4_1.2_his.nc \
                            --xy_file input/idealized_grid_input.txt
 
     # Get help
-    python script.py --help
+    python compare_dvar.py --help
 """
 
 def compute_variable_difference(file1, file2, variable, xy_file=None):
@@ -71,35 +74,30 @@ def main():
         help="Variable name to compute the difference for (e.g., 'tke')."
     )
     parser.add_argument(
-        "--baseline_file1",
+        "--baseline_reference",
         required=True,
         type=str,
-        help="Path to the first baseline NetCDF file."
+        help="Path to the reference baseline NetCDF file."
     )
     parser.add_argument(
-        "--baseline_file2",
+        "--baseline_parametrized",
         required=True,
+        nargs="+",
         type=str,
-        help="Path to the second baseline NetCDF file."
+        help="Paths to one or more baseline parametrized NetCDF files."
     )
     parser.add_argument(
-        "--param_file_pattern",
-        default='output/gen_str_C4_{GLS_C4}_his.nc',
-        type=str,
-        help="Pattern for parameterized NetCDF files. Default 'output/gen_str_C4_{GLS_C4}_his.nc'."
-    )
-    parser.add_argument(
-        "--reference_file",
+        "--reference",
         required=True,
         type=str,
         help="Path to the reference NetCDF file."
     )
     parser.add_argument(
-        "--gls_c4_values",
+        "--parametrized",
+        required=True,
         nargs="+",
-        type=float,
-        default=[0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0, 1.1, 1.2, 1.3, 1.4, 1.5],
-        help="List of GLS_C4 values to use for parameterized files. Default: [0.2, 0.3, ..., 1.5]."
+        type=str,
+        help="Paths to one or more parametrized NetCDF files."
     )
     parser.add_argument(
         "--xy_file",
@@ -111,29 +109,31 @@ def main():
 
     # Extract arguments
     variable = args.variable
-    baseline_file1 = args.baseline_file1
-    baseline_file2 = args.baseline_file2
-    param_file_pattern = args.param_file_pattern
-    reference_file = args.reference_file
-    GLS_C4_VALUES = args.gls_c4_values
+    baseline_reference = args.baseline_reference
+    baseline_parametrized = args.baseline_parametrized
+    parametrized = args.parametrized
+    reference = args.reference
     xy_file = args.xy_file
 
     # Plotting
     fig, ax = plt.subplots(figsize=(10, 6))
     
-    # Compute and plot baseline ΔVariable
-    print(f"Computing Δ{variable} for baseline files: {baseline_file1} and {baseline_file2}")
-    baseline_dvar = compute_variable_difference(baseline_file1, baseline_file2, variable, xy_file)
-    if baseline_dvar is not None:
-        ax.plot(baseline_dvar, label=f"Baseline Δ{variable}", linewidth=3, color="black")
+    # Compute and plot ΔVariable for each baseline_parametrized file
+
+    linestyles = ["-", "--", "-."]
+    for i, baseline_file in enumerate(baseline_parametrized):
+        print(f"Computing Δ{variable} for baseline files: {baseline_file} and {baseline_reference}")
+        baseline_dvar = compute_variable_difference(baseline_file, baseline_reference, variable, xy_file)
+        if baseline_dvar is not None:
+            label = f"{os.path.basename(baseline_file)}"
+            ax.plot(baseline_dvar, label=label, linewidth=3, color="black", ls=linestyles[i])
     
     # Compute and plot ΔVariable for parameterized files
-    for GLS_C4 in GLS_C4_VALUES:
-        file1 = param_file_pattern.format(GLS_C4=GLS_C4)
-        print(f"Computing Δ{variable} for file: {file1} and reference: {reference_file}")
-        dvar = compute_variable_difference(file1, reference_file, variable, xy_file)
+    for i, file in enumerate(parametrized):
+        print(f"Computing Δ{variable} for file: {file} and reference: {reference}")
+        dvar = compute_variable_difference(file, reference, variable, xy_file)
         if dvar is not None:
-            label = f"Δ{variable} (GLS_C4={GLS_C4})"
+            label = f"{os.path.basename(file)}"
             ax.plot(dvar, label=label)
     
     # Finalize the plot
