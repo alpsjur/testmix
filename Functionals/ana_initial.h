@@ -217,7 +217,7 @@
 !  Initial conditions for free-surface (m).
 !-----------------------------------------------------------------------
 !
-# ifdef TESTMIX
+# ifdef NOTESTMIX
 !  Geostrophic SSH slope in x: eta(x) = (f0*V0/g) * x
 !  f0=1.263e-4 rad/s, V0=0.15 m/s, g=9.81 m/s2 => slope~1.931e-6 m/m
       DO j=JstrT,JendT

@@ -7,7 +7,7 @@
 **
 ** Options for Test Mix.
 **
-** Application flag:   TESTMIX_WIND or TESTMIX_CURRENT
+** Application flag:   TESTMIX
 ** Input script:       testmix.in
 */
 
@@ -45,15 +45,15 @@
 #undef  K_C4ADVECTION
 
 
-/* OTHER (from romsmix and upwelling) */
+/* OTHER */
 #define ANA_INITIAL
 #define ANA_SMFLUX
 #define ANA_STFLUX
 #define ANA_SSFLUX
 #define ANA_BTFLUX
 #define ANA_BSFLUX
-#define ANA_FSOBC          /* analytical free-surface OBC at W/E open boundaries */
-#define ANA_M2OBC          /* analytical 2D momentum OBC at W/E open boundaries */
+#define ANA_FSOBC          /* analytical free-surface OBC */
+#define ANA_M2OBC          /* analytical 2D momentum OBC */
 
 /* Structure drag parametrization */
 #define STRUCTURE_MIXING

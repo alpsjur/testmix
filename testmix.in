@@ -182,7 +182,7 @@ ad_Vadvection == C4       \                     ! temperature
 !                   1       2       3       4
 
 
-   LBC(isFsur) ==   Cha     Cla     Cha     Cha         ! free-surface        
+   LBC(isFsur) ==   Cha     Cha     Cha     Cha         ! free-surface        
    LBC(isUbar) ==   Fla     Cla     Fla     Fla         ! 2D U-momentum       
    LBC(isVbar) ==   Fla     Cla     Fla     Fla         ! 2D V-momentum       
    LBC(isUvel) ==   Rad     Rad     Rad     Rad         ! 3D U-momentum       
