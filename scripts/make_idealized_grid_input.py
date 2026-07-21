@@ -13,4 +13,4 @@ with open("input/idealized_grid_input.txt", "w") as file:
             # Write the row and column to the file
             file.write(f"{x} {y}\n")
 
-print("File 'idealized_grid_input.txt' has been created with the desired output.")
+print("File 'idealized_grid_input.txt' has been created.")
