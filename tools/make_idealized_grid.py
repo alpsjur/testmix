@@ -25,6 +25,7 @@ The vertical coordinates used are Vtransform=2, Vstretching=5
 
 import argparse
 import numpy as np
+from utils import compute_z_r
 
 try:
     import netCDF4 as nc
@@ -49,51 +50,6 @@ VSTRETCHING = 5
 THETA_S     = 5.0
 THETA_B     = 4.0
 HC          = 100.0   # = Tcline from testmix.in
-
-
-def compute_z_r(h, hc, theta_s, theta_b, N):
-    """
-    Compute depths at rho-levels assuming zeta=0 (mean sea level).
-    Vtransform=2, Vstretching=5 (Shchepetkin 2010).
-    Matches the formula in roms/ROMS/Utility/set_scoord.F lines 512-531.
-
-    Parameters
-    ----------
-    h          : ndarray (eta_rho, xi_rho), positive downward [m]
-    hc, theta_s, theta_b, N : scalar ROMS parameters
-
-    Returns
-    -------
-    z_r : ndarray (N, eta_rho, xi_rho), negative (sea level = 0)
-          Index [0] is the bottom-most rho-level (k=1 in Fortran).
-          Index [N-1] is the top-most rho-level (k=N in Fortran).
-    """
-    k_arr = np.arange(1, N + 1, dtype=float)
-    rN    = float(N)
-
-    # Non-uniform s-coordinate (Vstretching=5, matches set_scoord.F line 515-516)
-    sc_r = -(k_arr**2 - 2.0*k_arr*rN + k_arr + rN**2 - rN) / (rN**2 - rN) \
-           - 0.01*(k_arr**2 - k_arr*rN) / (1.0 - rN)
-
-    # Stretching function: surface part
-    if theta_s > 0:
-        Csur = (1.0 - np.cosh(theta_s * sc_r)) / (np.cosh(theta_s) - 1.0)
-    else:
-        Csur = -(sc_r ** 2)
-
-    # Stretching function: bottom enhancement
-    if theta_b > 0:
-        Cs_r = (np.exp(theta_b * Csur) - 1.0) / (1.0 - np.exp(-theta_b))
-    else:
-        Cs_r = Csur
-
-    h3d   = h[np.newaxis, :, :]
-    sc_3d = sc_r[:, np.newaxis, np.newaxis]
-    Cs_3d = Cs_r[:, np.newaxis, np.newaxis]
-
-    # Vtransform=2, zeta=0
-    z_r = (hc * sc_3d + h3d * Cs_3d) / (hc + h3d) * h3d
-    return z_r   # <= 0
 
 
 def build_str_a(h, pm, pn, z_r, str_a_value, depth_zero_below=None, input_points=None):
@@ -232,7 +188,7 @@ def write_grid(output, str_a_value, depth_zero_below, input_file):
         ds.title       = "ROMS grid file for testmix"
         ds.type        = "ROMS grid file"
         ds.Conventions = "CF-1.6"
-        ds.history     = "Created by make_grid.py"
+        ds.history     = "Created by make_idealized_grid.py"
 
         # Dimensions
         ds.createDimension('xi_rho',  xi_rho)
@@ -321,14 +277,14 @@ def write_grid(output, str_a_value, depth_zero_below, input_file):
 def main():
     parser = argparse.ArgumentParser(
         description='Create testmix ROMS grid NetCDF with str_a field')
-    parser.add_argument('--output', default='testmix_grd.nc',
+    parser.add_argument('--output', default='input/testmix_grd.nc',
                         help='Output filename (default: testmix_grd.nc)')
-    parser.add_argument('--str_a', type=float, default=0.01,
+    parser.add_argument('--str_a', type=float, default=0.001,
                         help='Uniform str_a value in m⁻¹ (default: 0.01)')
     parser.add_argument('--depth_zero', type=float, default=None,
                         help='Set str_a=0 below this depth in m '
                              '(default: full column non-zero)')
-    parser.add_argument('--input_file', type=str, default=None,
+    parser.add_argument('--input_file', type=str, default='input/idealized_grid_input.txt',
                         help='Path to text file with xi, eta points for str_a')
     args = parser.parse_args()
 

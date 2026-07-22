@@ -221,7 +221,7 @@ ad_VolCons(north) ==  F                            ! northern boundary
 
 ! Time-Stepping parameters.
 
-      NTIMES == 15120  ! 60480 for month, 15120 for weekly
+      NTIMES == 15120  ! 60480 for month, 15120 for week, 2160 for day
           DT == 40.0d0
      NDTFAST == 20
 
@@ -433,7 +433,7 @@ LtracerSponge == F F                            ! temperature, salinity, inert
 
       DSTART =  0.0d0                      ! days
   TIDE_START =  0.0d0                      ! days
-    TIME_REF =  19700101.0d0               ! yyyymmdd.dd
+    TIME_REF =  00010101.0d0               ! yyyymmdd.dd
 
 ! Nudging/relaxation time scales, inverse scales will be computed
 ! internally, [1:Ngrids].
@@ -1100,8 +1100,8 @@ PIO_I2C_Preq = 65                 ! Maximum pending I2C requests
 
 ! Input NetCDF file names, [1:Ngrids].
 
-     GRDNAME == testmix_grd.nc
-     ININAME == roms_ini.nc
+     GRDNAME == input/testmix_grd.nc
+     ININAME == input/testmix_ini.nc
      ITLNAME == roms_itl.nc
      IRPNAME == roms_irp.nc
      IADNAME == roms_iad.nc
@@ -1143,7 +1143,7 @@ PIO_I2C_Preq = 65                 ! Maximum pending I2C requests
 
     NBCFILES == 1                          ! number of boundary files
 
-     BRYNAME == roms_bry.nc
+     BRYNAME == input/testmix_bry.nc
 
 ! Input climatology file names. The USER has the option to separate the
 ! climatology variables into individual NetCDF files (NCLMFILES > 1),

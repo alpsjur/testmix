@@ -46,14 +46,14 @@
 
 
 /* OTHER */
-#define ANA_INITIAL
+#undef  ANA_INITIAL
 #define ANA_SMFLUX
 #define ANA_STFLUX
 #define ANA_SSFLUX
 #define ANA_BTFLUX
 #define ANA_BSFLUX
-#define ANA_FSOBC          /* analytical free-surface OBC */
-#define ANA_M2OBC          /* analytical 2D momentum OBC */
+#undef  ANA_FSOBC          /* analytical free-surface OBC at W/E open boundaries */
+#undef  ANA_M2OBC          /* analytical 2D momentum OBC at W/E open boundaries */
 
 /* Structure drag parametrization */
 #define STRUCTURE_MIXING
