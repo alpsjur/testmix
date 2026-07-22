@@ -34,7 +34,7 @@ def main():
         "output/k-e_str_C4_1.4_his.nc"
     ]
     reference = "output/gen_nostr_his.nc"
-    c4_list = [0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0, 1.1, 1.2, 1.3, 1.4, 1.5]
+    c4_list = [0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0, 1.1, 1.2, 1.3, 1.4, 1.5]
     parametrized = [
         f"output/gen_str_C4_{c4}_his.nc" for c4 in c4_list
     ]
