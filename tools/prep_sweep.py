@@ -86,7 +86,7 @@ def write_manifest_yaml(path: str, sweep_id: str, rows: list) -> None:
 
 def write_manifest_csv(path: str, rows: list) -> None:
     """Write CSV manifest for quick analysis."""
-    cols = ["hash_exact", "status", "run_name", "params", "run_dir", "grid", "ini", "bry", "resolved_config"]
+    cols = ["hash_exact", "status", "run_name", "resolved_config", "params"]
     with open(path, "w") as f:
         f.write(",".join(cols) + "\n")
         for r in rows:
@@ -95,12 +95,8 @@ def write_manifest_csv(path: str, rows: list) -> None:
                 r["hash_exact"],
                 r["status"],
                 r["run_name"],
-                f"\"{params_str}\"",
-                r["run_dir"],
-                r["grid"],
-                r["ini"],
-                r["bry"],
                 r["resolved_config"],
+                f"\"{params_str}\"",
             ]
             f.write(",".join(line) + "\n")
 
@@ -114,6 +110,7 @@ def main():
     sdef = sweep["sweep"]
     sweep_id = sdef["id"]
     base_config_path = sdef["base_config"]
+    apply_config_path = sdef.get("apply_config")
     params = sdef["parameters"]
     run_name_template = sdef["run_name_template"]
     sweep_out_dir = sdef["output_dir"]
@@ -128,6 +125,11 @@ def main():
 
     with open(base_config_path, "r") as f:
         base = yaml.safe_load(f) or {}
+
+    if apply_config_path:
+        with open(apply_config_path, "r") as f:
+            applied = yaml.safe_load(f) or {}
+        base = deep_merge(base, applied)
 
     manifest_rows = []
     index = 1
@@ -151,12 +153,8 @@ def main():
             "hash_exact": result["hash_exact"],
             "status": "prepared",
             "run_name": run_name,
-            "params": combo,
-            "run_dir": result["run_dir"],
-            "grid": result["grid"],
-            "ini": result["ini"],
-            "bry": result["bry"],
             "resolved_config": result["resolved_config"],
+            "params": combo,
         })
 
         print(f"Prepared run {index}: {run_name} -> {result['run_dir']}")
