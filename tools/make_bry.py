@@ -20,6 +20,66 @@ import netCDF4 as nc
 import yaml
 
 
+# ---------------------------------------------------------------------------
+# Boundary Condition Functions
+# ---------------------------------------------------------------------------
+
+def zeta_boundary(x, y, params, boundary_name):
+    """
+    Define free-surface (zeta) boundary condition.
+
+    Args:
+        x: X-coordinates along the boundary.
+        y: Y-coordinates along the boundary.
+        params: A dictionary with boundary-specific parameters (e.g., value, slope).
+        boundary_name: Name of the boundary (e.g., 'north', 'south').
+
+    Returns:
+        A 1D array representing zeta along the boundary.
+    """
+    zeta_value = params["value"]
+    zeta_slope = params["slope"]
+    if boundary_name in ["south", "north"]:
+        return zeta_value * np.ones_like(x) + (x - np.mean(x)) * zeta_slope
+    else:
+        return zeta_value * np.ones_like(y) + (y - np.mean(y)) * zeta_slope
+
+def ubar_boundary(x, y, params, boundary_name):
+    """
+    Define 2D U-momentum (ubar) boundary condition.
+
+    Args:
+        x: X-coordinates along the boundary.
+        y: Y-coordinates along the boundary.
+        params: A dictionary with boundary-specific parameters (e.g., value).
+        boundary_name: Name of the boundary (e.g., 'north', 'south').
+
+    Returns:
+        A 1D array representing ubar along the boundary.
+    """
+    ubar_value = params["value"]
+    return ubar_value * np.ones_like(x if boundary_name in ["south", "north"] else y)
+
+def vbar_boundary(x, y, params, boundary_name):
+    """
+    Define 2D V-momentum (vbar) boundary condition.
+
+    Args:
+        x: X-coordinates along the boundary.
+        y: Y-coordinates along the boundary.
+        params: A dictionary with boundary-specific parameters (e.g., value).
+        boundary_name: Name of the boundary (e.g., 'north', 'south').
+
+    Returns:
+        A 1D array representing vbar along the boundary.
+    """
+    vbar_value = params["value"]
+    return vbar_value * np.ones_like(x if boundary_name in ["south", "north"] else y)
+
+
+# ---------------------------------------------------------------------------
+# Main Boundary File Creation Function
+# ---------------------------------------------------------------------------
 def make_bry_from_config(cfg: dict) -> str:
     """
     Create the boundary condition file using values from a resolved config dict.
@@ -27,11 +87,9 @@ def make_bry_from_config(cfg: dict) -> str:
     Required keys in cfg:
       - io.input_dir
       - files.grd, files.bry
-      - boundary:
-          bry_time_seconds
-          zeta.north/south/east/west
-          ubar.north/south/east/west
-          vbar.north/south/east/west
+      - boundary
+          - bry_time_seconds
+          - zeta, ubar, vbar (each with 'north', 'south', 'east', 'west' subkeys)
     """
     input_dir = cfg["io"]["input_dir"]
     grd_name  = cfg["files"]["grd"]
@@ -43,10 +101,6 @@ def make_bry_from_config(cfg: dict) -> str:
 
     bcfg = cfg["boundary"]
     bry_time_seconds = float(bcfg["bry_time_seconds"])
-
-    zeta_vals = bcfg["zeta"]
-    ubar_vals = bcfg["ubar"]
-    vbar_vals = bcfg["vbar"]
 
     # Read grid geometry
     with nc.Dataset(grd_path, "r") as grd:
@@ -109,8 +163,9 @@ def make_bry_from_config(cfg: dict) -> str:
         # One record per boundary and variable
         for bname, bvars in boundary_map.items():
             # zeta
-            _, _, dimname = bvars["zeta"]
-            zeta_arr = np.full_like(bvars["zeta"][0], float(zeta_vals[bname]), dtype=np.float64)
+            zeta_x, zeta_y, dimname = bvars["zeta"]
+            zeta_params = bcfg["zeta"][bname]
+            zeta_arr = zeta_boundary(zeta_x, zeta_y, zeta_params, bname)
             v = ds.createVariable(f"zeta_{bname}", "f8", ("bry_time", dimname))
             v.long_name = f"Free surface at {bname} boundary"
             v.units     = "meter"
@@ -118,8 +173,9 @@ def make_bry_from_config(cfg: dict) -> str:
             v[0, :]     = zeta_arr
 
             # ubar
-            _, _, dimname = bvars["ubar"]
-            ubar_arr = np.full_like(bvars["ubar"][0], float(ubar_vals[bname]), dtype=np.float64)
+            ubar_x, ubar_y, dimname = bvars["ubar"]
+            ubar_params = bcfg["ubar"][bname]
+            ubar_arr = ubar_boundary(ubar_x, ubar_y, ubar_params, bname)
             v = ds.createVariable(f"ubar_{bname}", "f8", ("bry_time", dimname))
             v.long_name = f"2D u-momentum at {bname} boundary"
             v.units     = "meter second-1"
@@ -127,8 +183,9 @@ def make_bry_from_config(cfg: dict) -> str:
             v[0, :]     = ubar_arr
 
             # vbar
-            _, _, dimname = bvars["vbar"]
-            vbar_arr = np.full_like(bvars["vbar"][0], float(vbar_vals[bname]), dtype=np.float64)
+            vbar_x, vbar_y, dimname = bvars["vbar"]
+            vbar_params = bcfg["vbar"][bname]
+            vbar_arr = vbar_boundary(vbar_x, vbar_y, vbar_params, bname)
             v = ds.createVariable(f"vbar_{bname}", "f8", ("bry_time", dimname))
             v.long_name = f"2D v-momentum at {bname} boundary"
             v.units     = "meter second-1"

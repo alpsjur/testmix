@@ -19,23 +19,124 @@ import netCDF4 as nc
 import yaml
 from utils import compute_z_r
 
+# ---------------------------------------------------------------------------
+# Initialization Functions
+# ---------------------------------------------------------------------------
+
+def zeta_initial(x_rho, y_rho, params):
+    """
+    Define the initial free surface (`zeta`) as a function of `x_rho` and `y_rho`.
+    
+    Args:
+        x_rho: X-coordinates at RHO points.
+        y_rho: Y-coordinates at RHO points.
+        params: A dictionary of parameters (e.g., zeta_slope).
+
+    Returns:
+        A 2D array representing the initial `zeta`.
+    """
+    zeta_slope = params.get("zeta_slope", 0.01)  # Default slope
+    return (x_rho - np.mean(x_rho[0])) * zeta_slope
+
+def ubar_initial(eta_u, xi_u, params):
+    """
+    Define the initial vertically integrated u-momentum (`ubar`).
+
+    Args:
+        eta_u: Number of points in the eta direction for U points.
+        xi_u: Number of points in the xi direction for U points.
+        params: A dictionary of parameters (e.g., ubar_constant).
+
+    Returns:
+        A 2D array representing the initial `ubar`.
+    """
+    ubar_const = params.get("ubar_constant", 0.0)
+    return np.full((eta_u, xi_u), ubar_const, dtype=np.float64)
+
+def vbar_initial(eta_v, xi_v, params):
+    """
+    Define the initial vertically integrated v-momentum (`vbar`).
+
+    Args:
+        eta_v: Number of points in the eta direction for V points.
+        xi_v: Number of points in the xi direction for V points.
+        params: A dictionary of parameters (e.g., vbar_constant).
+
+    Returns:
+        A 2D array representing the initial `vbar`.
+    """
+    vbar_const = params.get("vbar_constant", 0.0)
+    return np.full((eta_v, xi_v), vbar_const, dtype=np.float64)
+
+def u_initial(N, eta_u, xi_u, params):
+    """
+    Define the initial 3D u-momentum component (`u`).
+
+    Args:
+        N: Number of vertical levels.
+        eta_u: Number of points in the eta direction for U points.
+        xi_u: Number of points in the xi direction for U points.
+        params: A dictionary of parameters (e.g., u_constant).
+
+    Returns:
+        A 3D array representing the initial `u`.
+    """
+    u_const = params.get("u_constant", 0.0)
+    return np.full((N, eta_u, xi_u), u_const, dtype=np.float64)
+
+def v_initial(N, eta_v, xi_v, params):
+    """
+    Define the initial 3D v-momentum component (`v`).
+
+    Args:
+        N: Number of vertical levels.
+        eta_v: Number of points in the eta direction for V points.
+        xi_v: Number of points in the xi direction for V points.
+        params: A dictionary of parameters (e.g., v_constant).
+
+    Returns:
+        A 3D array representing the initial `v`.
+    """
+    v_const = params.get("v_constant", 0.0)
+    return np.full((N, eta_v, xi_v), v_const, dtype=np.float64)
+
+def temp_initial(z_r, params):
+    """
+    Define the initial temperature profile (`temp`) as a function of depth.
+
+    Args:
+        z_r: 3D array of vertical coordinates at RHO points.
+        params: A dictionary of parameters (e.g., temp_T0, temp_dT, temp_scale).
+
+    Returns:
+        A 3D array representing the initial `temp`.
+    """
+    temp_T0 = params.get("temp_T0", 20.0)
+    temp_dT = params.get("temp_dT", -10.0)
+    temp_scale = params.get("temp_scale", 100.0)
+    return temp_T0 + temp_dT * np.exp(z_r / temp_scale)
+
+def salt_initial(z_r, params):
+    """
+    Define the initial salinity profile (`salt`) as a function of depth.
+
+    Args:
+        z_r: 3D array of vertical coordinates at RHO points.
+        params: A dictionary of parameters (e.g., salt_S0).
+
+    Returns:
+        A 3D array representing the initial `salt`.
+    """
+    salt_S0 = params.get("salt_S0", 35.0)
+    return np.full_like(z_r, salt_S0, dtype=np.float64)
+
+# ---------------------------------------------------------------------------
+# Main Initial Conditions File Creation Function
+# ---------------------------------------------------------------------------
 
 def make_ini_from_config(cfg: dict) -> str:
     """
     Create the initial conditions file using values from a resolved config dict.
-
-    Required keys in cfg:
-      - io.input_dir
-      - files.grd, files.ini
-      - grid.N
-      - vertical.Vtransform, vertical.Vstretching, vertical.THETA_S, vertical.THETA_B, vertical.HC
-      - initial:
-          ocean_time_seconds
-          ubar_constant, vbar_constant
-          u_constant, v_constant
-          zeta_constant
-          temp_T0, temp_dT, temp_scale
-          salt_S0
     """
     input_dir = cfg["io"]["input_dir"]
     grd_name  = cfg["files"]["grd"]
@@ -54,17 +155,7 @@ def make_ini_from_config(cfg: dict) -> str:
     THETA_B     = float(cfg["vertical"]["THETA_B"])
     HC          = float(cfg["vertical"]["HC"])
 
-    init = cfg["initial"]
-    ocean_time_seconds = float(init["ocean_time_seconds"])
-    ubar_const = float(init["ubar_constant"])
-    vbar_const = float(init["vbar_constant"])
-    u_const    = float(init["u_constant"])
-    v_const    = float(init["v_constant"])
-    zeta_const = float(init["zeta_constant"])
-    temp_T0    = float(init["temp_T0"])
-    temp_dT    = float(init["temp_dT"])
-    temp_scale = float(init["temp_scale"])
-    salt_S0    = float(init["salt_S0"])
+    ocean_time_seconds = float(cfg["initial"]["ocean_time_seconds"])
 
     # Read grid geometry
     with nc.Dataset(grd_path, "r") as grd:
@@ -84,31 +175,30 @@ def make_ini_from_config(cfg: dict) -> str:
         eta_v   = eta_rho - 1
 
     # Compute vertical coordinates at RHO-points
-    # Note: compute_z_r signature expected as compute_z_r(h, HC, THETA_S, THETA_B, N)
     z_r = compute_z_r(h, HC, THETA_S, THETA_B, N)  # shape: (N, eta_rho, xi_rho)
 
     # Interpolate z_r to staggered points
     z_r_u = 0.5 * (z_r[:, :, :-1] + z_r[:, :, 1:])  # (N, eta_u, xi_u)
     z_r_v = 0.5 * (z_r[:, :-1, :] + z_r[:, 1:, :])  # (N, eta_v, xi_v)
 
-    # Allocate initial fields based on config
-    zeta = np.full((eta_rho, xi_rho), zeta_const, dtype=np.float64)
-    ubar = np.full((eta_u,  xi_u),  ubar_const, dtype=np.float64)
-    vbar = np.full((eta_v,  xi_v),  vbar_const, dtype=np.float64)
+    # Allocate initial fields using parameterized functions
+    init_params = cfg["initial"]
 
-    u_3d = np.full((N, eta_u,  xi_u),  u_const, dtype=np.float64)
-    v_3d = np.full((N, eta_v,  xi_v),  v_const, dtype=np.float64)
-
-    temp = temp_T0 + temp_dT * np.exp(z_r / float(temp_scale))
-    salt = np.full_like(z_r, salt_S0, dtype=np.float64)
+    zeta = zeta_initial(x_rho, y_rho, init_params)
+    ubar = ubar_initial(eta_u, xi_u, init_params)
+    vbar = vbar_initial(eta_v, xi_v, init_params)
+    u_3d = u_initial(N, eta_u, xi_u, init_params)
+    v_3d = v_initial(N, eta_v, xi_v, init_params)
+    temp = temp_initial(z_r, init_params)
+    salt = salt_initial(z_r, init_params)
 
     # Write initial conditions NetCDF
     with nc.Dataset(ini_path, "w", format="NETCDF4") as f:
         # Global attributes
-        f.title       = "ROMS Initial Conditions (config-driven)"
-        f.history     = "Created by tools/make_ini.py"
-        f.description = "Initial conditions with constant velocities and analytic T,S"
-        f.source      = "Generated from grid file"
+        f.title = "ROMS Initial Conditions (parameterized)"
+        f.history = "Created by tools/make_ini.py"
+        f.description = "Initial conditions with parameterized functions for initialization"
+        f.source = "Generated from grid file"
 
         # Dimensions
         f.createDimension("xi_rho", xi_rho)
@@ -123,51 +213,18 @@ def make_ini_from_config(cfg: dict) -> str:
         # ocean_time
         ocean_time = f.createVariable("ocean_time", "f8", ("ocean_time",))
         ocean_time.long_name = "time since simulation start"
-        ocean_time.units     = "seconds since 0001-01-01 00:00:00"
-        ocean_time.calendar  = "360.0 days in every year"
-        ocean_time[0]        = ocean_time_seconds
+        ocean_time.units = "seconds since 0001-01-01 00:00:00"
+        ocean_time.calendar = "360.0 days in every year"
+        ocean_time[0] = ocean_time_seconds
 
-        # zeta
-        v_zeta = f.createVariable("zeta", "f8", ("ocean_time", "eta_rho", "xi_rho"))
-        v_zeta.long_name = "free-surface"
-        v_zeta.units     = "meter"
-        v_zeta[0, :, :]  = zeta
-
-        # ubar
-        v_ubar = f.createVariable("ubar", "f8", ("ocean_time", "eta_u", "xi_u"))
-        v_ubar.long_name = "vertically integrated u-momentum component"
-        v_ubar.units     = "meter second-1"
-        v_ubar[0, :, :]  = ubar
-
-        # vbar
-        v_vbar = f.createVariable("vbar", "f8", ("ocean_time", "eta_v", "xi_v"))
-        v_vbar.long_name = "vertically integrated v-momentum component"
-        v_vbar.units     = "meter second-1"
-        v_vbar[0, :, :]  = vbar
-
-        # u (3D)
-        v_u = f.createVariable("u", "f8", ("ocean_time", "s_rho", "eta_u", "xi_u"))
-        v_u.long_name = "u-momentum component"
-        v_u.units     = "meter second-1"
-        v_u[0, :, :, :] = u_3d
-
-        # v (3D)
-        v_v = f.createVariable("v", "f8", ("ocean_time", "s_rho", "eta_v", "xi_v"))
-        v_v.long_name = "v-momentum component"
-        v_v.units     = "meter second-1"
-        v_v[0, :, :, :] = v_3d
-
-        # temp
-        v_temp = f.createVariable("temp", "f8", ("ocean_time", "s_rho", "eta_rho", "xi_rho"))
-        v_temp.long_name = "potential temperature"
-        v_temp.units     = "Celsius"
-        v_temp[0, :, :, :] = temp
-
-        # salt
-        v_salt = f.createVariable("salt", "f8", ("ocean_time", "s_rho", "eta_rho", "xi_rho"))
-        v_salt.long_name = "salinity"
-        v_salt.units     = "PSU"
-        v_salt[0, :, :, :] = salt
+        # Variables
+        f.createVariable("zeta", "f8", ("ocean_time", "eta_rho", "xi_rho"))[0, :, :] = zeta
+        f.createVariable("ubar", "f8", ("ocean_time", "eta_u", "xi_u"))[0, :, :] = ubar
+        f.createVariable("vbar", "f8", ("ocean_time", "eta_v", "xi_v"))[0, :, :] = vbar
+        f.createVariable("u", "f8", ("ocean_time", "s_rho", "eta_u", "xi_u"))[0, :, :, :] = u_3d
+        f.createVariable("v", "f8", ("ocean_time", "s_rho", "eta_v", "xi_v"))[0, :, :, :] = v_3d
+        f.createVariable("temp", "f8", ("ocean_time", "s_rho", "eta_rho", "xi_rho"))[0, :, :, :] = temp
+        f.createVariable("salt", "f8", ("ocean_time", "s_rho", "eta_rho", "xi_rho"))[0, :, :, :] = salt
 
     print(f"Initial conditions file written: {ini_path}")
     return ini_path

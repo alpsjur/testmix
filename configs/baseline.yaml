@@ -58,12 +58,18 @@ structure:
 boundary:
   bry_time_seconds: 0.0
 
-  # Constant boundary values (per edge)
+  # Boundary values (per edge)
   zeta:
-    north: 0.0
-    south: 0.0
-    east: 0.0
-    west: 0.0
+    north: 0
+    south: 0
+    east: 0.03
+    west: -0.03
+
+  zeta_slope:
+    north: 1.931e-6
+    south: 1.931e-6
+    east: 0
+    west: 0
 
   ubar:
     north: 0.0
@@ -88,8 +94,8 @@ initial:
   u_constant: 0.0
   v_constant: 0.15
 
-  # Free-surface (constant)
-  zeta_constant: 0.0
+  # Free-surface slope west to east
+  zeta_slope: 1.931e-6                   # corresponds to 0.15 m/s geostrophic velocity
 
   # Temperature profile: T = temp_T0 + temp_dT * exp(z/ temp_scale)
   temp_T0: 14.0
