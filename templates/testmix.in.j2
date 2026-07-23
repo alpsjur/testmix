@@ -251,7 +251,7 @@ ad_VolCons(north) ==  F                            ! northern boundary
 
        NRREC == 0
    LcycleRST == F
-        NRST == 2160 ! daily restart files
+        NRST == 0 
         NSTA == 0
         NFLT == 1
        NINFO == 90
@@ -261,13 +261,13 @@ ad_VolCons(north) ==  F                            ! northern boundary
      LDEFOUT == T
         NHIS == 90
      NDEFHIS == 0
-        NQCK == 90
+        NQCK == 0
      NDEFQCK == 0
       NTSAVG == 1
-        NAVG == 2160
+        NAVG == 0
      NDEFAVG == 0
       NTSDIA == 1
-        NDIA == 90
+        NDIA == 0
      NDEFDIA == 0
 
 ! Output tangent linear and adjoint models parameters.
@@ -349,24 +349,24 @@ LtracerSponge == F F                            ! temperature, salinity, inert
 
 ! Generic length-scale turbulence closure parameters.
 
-       GLS_P == 2.0d0                           ! Generic
-       GLS_M == 1.0d0
-       GLS_N == -0.67d0
-    GLS_Kmin == 1.0d-8
-    GLS_Pmin == 1.0d-8
+       GLS_P == {{ GLS.P }}d0                           
+       GLS_M == {{ GLS.M }}d0
+       GLS_N == {{ GLS.N }}d0
+    GLS_Kmin == {{ GLS.Kmin }}d-8
+    GLS_Pmin == {{ GLS.Pmin }}d-8
 
-    GLS_CMU0 == 0.5270d0
-      GLS_C1 == 1.0d0
-      GLS_C2 == 1.22d0
-     GLS_C3M == 0.05d0
-     GLS_C3P == 1.0d0
-    GLS_SIGK == 0.8d0
-    GLS_SIGP == 1.07d0
+    GLS_CMU0 == {{ GLS.CMU0 }}d0
+      GLS_C1 == {{ GLS.C1 }}d0
+      GLS_C2 == {{ GLS.C2 }}d0
+     GLS_C3M == {{ GLS.C3M }}d0
+     GLS_C3P == {{ GLS.C3P }}d0
+    GLS_SIGK == {{ GLS.SIGK }}d0
+    GLS_SIGP == {{ GLS.SIGP }}d0
 
 ! Structure drag and mixing parameters (STRUCTURE_MIXING).
 
-      STR_CD == 0.63d0                            ! structure drag coefficient
-      GLS_C4 == 0.6
+      STR_CD == {{ structure.CD }}d0                            ! structure drag coefficient
+      GLS_C4 == {{ structure.c4 }}d0
 
 ! Constants used in surface turbulent kinetic energy flux computation.
 

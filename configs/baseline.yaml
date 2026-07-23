@@ -2,8 +2,9 @@ run:
   name: baseline
 
 io:
-  input_dir: runs/baseline/input
-  output_dir: runs/baseline/output
+  base_dir: /lustre/storeB/users/ansju8054/roms-ting/testmix
+  input_dir: /lustre/storeB/users/ansju8054/roms-ting/testmix/runs/baseline/input
+  output_dir: /lustre/storeB/users/ansju8054/roms-ting/testmix/runs/baseline/output
   roms_dir: /lustre/storeB/users/ansju8054/roms-ting/roms
 
 files:
@@ -12,12 +13,26 @@ files:
   bry: testmix_bry.nc
 
 grid:
-  Lm: 30
-  Mm: 32
+  Lm: 38
+  Mm: 48
   N: 40
   H0: 150.0     # uniform depth (m)
   DX: 800.0     # grid spacing xi (m)
   DY: 800.0     # grid spacing eta (m)
+
+GLS:
+  P: 2.0
+  M: 1.0
+  N: -0.67
+  Kmin: 1.0
+  Pmin: 1.0
+  CMU0: 0.527
+  C1: 1.0
+  C2: 1.22
+  C3M: 0.05
+  C3P : 1.0
+  SIGK: 0.8
+  SIGP: 1.07
 
 vertical:
   Vtransform: 2
@@ -33,10 +48,12 @@ phys:
   F0: 1.263e-4  # Coriolis (s^-1)
 
 structure:
-  str_a: 0.001            # uniform structure area density (m^-1)
+  str_a: 0.001            
   depth_zero_below: 1.0e9 # set to a large number to keep full column non-zero
-  eta_limits: [12, 22]
-  xi_limits: [10, 20]
+  eta_limits: [12, 22]    # define where str_a is non-zero
+  xi_limits: [14, 24]
+  CD: 0.63
+  c4: 1.4
 
 boundary:
   bry_time_seconds: 0.0
@@ -67,11 +84,11 @@ initial:
   ubar_constant: 0.0
   vbar_constant: 0.15
 
-  # 3D velocities (constant through the columnr)
+  # 3D velocities (constant through the column)
   u_constant: 0.0
   v_constant: 0.15
 
-  # Free-surface (constant; set to 0.0 for flat)
+  # Free-surface (constant)
   zeta_constant: 0.0
 
   # Temperature profile: T = temp_T0 + temp_dT * exp(z/ temp_scale)
