@@ -160,15 +160,15 @@ def write_grid(output, Lm, Mm, N, Vtransform, Vstretching, THETA_S, THETA_B, HC,
         v[:]        = str_a
 
     print(f"Grid file written: {output}")
-    print(f"  xi_rho={xi_rho}, eta_rho={eta_rho}, N={N}")
-    print(f"  Domain: {xl_val:.0f} m x {el_val:.0f} m, depth={H0:.0f} m")
-    print(f"  Vtransform={Vtransform}, Vstretching={Vstretching}, "
-          f"theta_s={THETA_S}, theta_b={THETA_B}, hc={HC}")
-    print(f"  str_a = {str_a_value} m^-1 with zero below {depth_zero_below} m")
-    if eta_limits:
-        print(f"  str_a eta limits: {eta_limits}")
-    if xi_limits:
-        print(f"  str_a xi limits: {xi_limits}")
+    # print(f"  xi_rho={xi_rho}, eta_rho={eta_rho}, N={N}")
+    # print(f"  Domain: {xl_val:.0f} m x {el_val:.0f} m, depth={H0:.0f} m")
+    # print(f"  Vtransform={Vtransform}, Vstretching={Vstretching}, "
+    #       f"theta_s={THETA_S}, theta_b={THETA_B}, hc={HC}")
+    # print(f"  str_a = {str_a_value} m^-1 with zero below {depth_zero_below} m")
+    # if eta_limits:
+    #     print(f"  str_a eta limits: {eta_limits}")
+    # if xi_limits:
+    #     print(f"  str_a xi limits: {xi_limits}")
 
 
 def make_grid_from_config(cfg: dict) -> str:
