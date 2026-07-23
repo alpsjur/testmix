@@ -1,5 +1,7 @@
 # data files
+runs/*
 *.nc
+zold/*
 
 # log files
 *.log

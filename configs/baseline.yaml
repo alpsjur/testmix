@@ -1,0 +1,83 @@
+run:
+  name: baseline
+
+io:
+  input_dir: runs/baseline/input
+  output_dir: runs/baseline/output
+  roms_dir: /lustre/storeB/users/ansju8054/roms-ting/roms
+
+files:
+  grd: testmix_grd.nc
+  ini: testmix_ini.nc
+  bry: testmix_bry.nc
+
+grid:
+  Lm: 30
+  Mm: 32
+  N: 40
+  H0: 150.0     # uniform depth (m)
+  DX: 800.0     # grid spacing xi (m)
+  DY: 800.0     # grid spacing eta (m)
+
+vertical:
+  Vtransform: 2
+  Vstretching: 5
+  THETA_S: 5.0
+  THETA_B: 4.0
+  HC: 100.0
+
+time_stepping:
+  NTIMES: 15120  # 60480 for month, 15120 for week, 2160 for day
+
+phys:
+  F0: 1.263e-4  # Coriolis (s^-1)
+
+structure:
+  str_a: 0.001            # uniform structure area density (m^-1)
+  depth_zero_below: 1.0e9 # set to a large number to keep full column non-zero
+  eta_limits: [12, 22]
+  xi_limits: [10, 20]
+
+boundary:
+  bry_time_seconds: 0.0
+
+  # Constant boundary values (per edge)
+  zeta:
+    north: 0.0
+    south: 0.0
+    east: 0.0
+    west: 0.0
+
+  ubar:
+    north: 0.0
+    south: 0.0
+    east: 0.0
+    west: 0.0
+
+  vbar:
+    north: 0.15
+    south: 0.15
+    east: 0.15
+    west: 0.15
+
+initial:
+  ocean_time_seconds: 0.0   # time stamp for the IC file
+
+  # Barotropic (2D) velocities (constant fields)
+  ubar_constant: 0.0
+  vbar_constant: 0.15
+
+  # 3D velocities (constant through the columnr)
+  u_constant: 0.0
+  v_constant: 0.15
+
+  # Free-surface (constant; set to 0.0 for flat)
+  zeta_constant: 0.0
+
+  # Temperature profile: T = temp_T0 + temp_dT * exp(z/ temp_scale)
+  temp_T0: 14.0
+  temp_dT: 8.0
+  temp_scale: 50.0
+
+  # Salinity (constant)
+  salt_S0: 35.0
