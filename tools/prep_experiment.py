@@ -1,12 +1,17 @@
 #!/usr/bin/env python3
 """
-prepare_run.py
+setup_experiment.py
 
-Resolve a baseline config with an optional override, set up runs/<name>/,
-generate grid/ini/bry files using tools/* helpers, and render the ROMS input file.
+Resolve a baseline config with an optional override OR accept a resolved config dict,
+set up runs/<name>/, generate grid/ini/bry files using tools/* helpers, and render the ROMS
+input file from templates/testmix.in.j2.
 
-Usage:
-  python prepare_run.py configs/baseline.yaml [configs/override.yaml]
+Usage (standalone):
+  python setup_experiment.py configs/baseline.yaml [configs/override.yaml]
+
+Usage (from code, e.g., in a sweep):
+  from setup_experiment import prepare_run_from_resolved
+  result = prepare_run_from_resolved(cfg)  # cfg is already resolved
 """
 
 import os
@@ -14,6 +19,22 @@ import sys
 import yaml
 from copy import deepcopy
 from jinja2 import Environment, FileSystemLoader
+import hashlib
+import copy
+
+# Tools
+from tools.make_grd import make_grid_from_config
+from tools.make_ini import make_ini_from_config
+from tools.make_bry import make_bry_from_config
+
+
+def _sha256_hex(s: str) -> str:
+    return hashlib.sha256(s.encode("utf-8")).hexdigest()
+
+def config_hash(cfg: dict) -> str:
+    """Exact hash of the fully resolved config (including run/io)."""
+    dumped = yaml.safe_dump(cfg, sort_keys=True)
+    return _sha256_hex(dumped)[:12]
 
 
 def deep_merge(a: dict, b: dict) -> dict:
@@ -69,15 +90,15 @@ def render_roms_input(cfg: dict, input_dir: str, template_dir: str = "templates"
     return out_in_path
 
 
-def main():
-    # Positional args: baseline [override]
-    baseline_path = sys.argv[1] if len(sys.argv) > 1 else "configs/baseline.yaml"
-    override_path = sys.argv[2] if len(sys.argv) > 2 else None
-
-    # 1) Resolve configuration
-    cfg = resolve_config(baseline_path, override_path)
-
-    # 2) Prepare run directories and inject run-local IO paths
+def prepare_run_from_resolved(cfg: dict) -> dict:
+    """
+    Prepare a run from an already-resolved config dict.
+    - Creates runs/<name>/{input,output,logs}
+    - Writes resolved_config.yaml
+    - Generates grid, ini, bry via tools/*
+    - Renders templates/testmix.in.j2
+    Returns a dict with paths for convenience.
+    """
     run_name = cfg["run"]["name"]
     run_dir, input_dir, output_dir, logs_dir = prepare_run_dirs(run_name)
 
@@ -85,22 +106,21 @@ def main():
     cfg["io"]["input_dir"] = input_dir
     cfg["io"]["output_dir"] = output_dir
 
-    # 3) Persist resolved configuration
+    # Inject hashes into _meta
+    cfg.setdefault("_meta", {})
+    cfg["_meta"]["hash"] = {
+        "exact": config_hash(cfg),
+    }
+
     resolved_path = write_resolved_config(cfg, run_dir)
 
-    # 4) Generate grid, initial conditions, and boundary files
-    from make_grd import make_grid_from_config
-    from make_ini import make_ini_from_config
-    from make_bry import make_bry_from_config
-
+    # Generate artifacts
     grid_path = make_grid_from_config(cfg)
     ini_path = make_ini_from_config(cfg)
     bry_path = make_bry_from_config(cfg)
-
-    # 5) Render the ROMS input file
     in_path = render_roms_input(cfg, input_dir)
 
-    # 6) Summary
+    # Summary
     print("Prepared run:")
     print(f"- run dir:    {run_dir}")
     print(f"- grid:       {grid_path}")
@@ -110,6 +130,28 @@ def main():
     print(f"- snapshot:   {resolved_path}")
     print(f"- output dir: {output_dir}")
     print(f"- logs dir:   {logs_dir}")
+
+    return {
+        "run_dir": run_dir,
+        "input_dir": input_dir,
+        "output_dir": output_dir,
+        "logs_dir": logs_dir,
+        "resolved_config": resolved_path,
+        "grid": grid_path,
+        "ini": ini_path,
+        "bry": bry_path,
+        "in_file": in_path,
+        "hash_exact": cfg["_meta"]["hash"]["exact"], 
+    }
+
+
+def main():
+    """CLI entry point: resolve baseline + optional override, then prepare the run."""
+    baseline_path = sys.argv[1] if len(sys.argv) > 1 else "configs/baseline.yaml"
+    override_path = sys.argv[2] if len(sys.argv) > 2 else None
+
+    cfg = resolve_config(baseline_path, override_path)
+    prepare_run_from_resolved(cfg)
 
 
 if __name__ == "__main__":

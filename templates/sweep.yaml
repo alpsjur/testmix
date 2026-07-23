@@ -1,0 +1,12 @@
+sweep:
+  id: example
+  base_config: configs/baseline.yaml
+
+  parameters:
+    vertical.N: [30, 40]
+    structure.str_a: [0.0005]
+    boundary.vbar.north: [0.05, 0.15]
+
+  run_name_template: "N{vertical.N}_sa{structure.str_a}_vN{boundary.vbar.north}"
+
+  output_dir: "sweeps/example"
