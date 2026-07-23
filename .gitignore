@@ -1,5 +1,6 @@
 # data files
 runs/*
+sweeps/*
 *.nc
 zold/*
 
