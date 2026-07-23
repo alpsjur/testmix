@@ -1,7 +1,7 @@
 run:
   name: k-e_closure_nostr
 
-GLS:
+GLS:        # k-epsilon closure
   P: 3.0
   M: 1.5
   N: -1.0
