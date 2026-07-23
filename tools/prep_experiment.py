@@ -3,8 +3,8 @@
 setup_experiment.py
 
 Resolve a baseline config with an optional override OR accept a resolved config dict,
-set up runs/<name>/, generate grid/ini/bry files using tools/* helpers, and render the ROMS
-input file from templates/testmix.in.j2.
+set up <base_dir>/runs/<name>/, generate grid/ini/bry files using tools/* helpers,
+and render the ROMS input file from templates/testmix.in.j2.
 
 Usage (standalone):
   python setup_experiment.py configs/baseline.yaml [configs/override.yaml]
@@ -20,7 +20,12 @@ import yaml
 from copy import deepcopy
 from jinja2 import Environment, FileSystemLoader
 import hashlib
-import copy
+
+# Ensure project root is importable when running from tools/
+THIS_DIR = os.path.dirname(__file__)
+ROOT_DIR = os.path.abspath(os.path.join(THIS_DIR, ".."))
+if ROOT_DIR not in sys.path:
+    sys.path.insert(0, ROOT_DIR)
 
 # Tools
 from tools.make_grd import make_grid_from_config
@@ -36,7 +41,6 @@ def config_hash(cfg: dict) -> str:
     dumped = yaml.safe_dump(cfg, sort_keys=True)
     return _sha256_hex(dumped)[:12]
 
-
 def deep_merge(a: dict, b: dict) -> dict:
     """Deep-merge dict b into a and return a new dict (b overrides a)."""
     out = deepcopy(a)
@@ -46,7 +50,6 @@ def deep_merge(a: dict, b: dict) -> dict:
         else:
             out[k] = deepcopy(v)
     return out
-
 
 def resolve_config(baseline_path: str, override_path: str | None = None) -> dict:
     """Load baseline (+ optional override) and return resolved config."""
@@ -58,10 +61,18 @@ def resolve_config(baseline_path: str, override_path: str | None = None) -> dict
             over = yaml.safe_load(f) or {}
     return deep_merge(base, over)
 
-
-def prepare_run_dirs(run_name: str) -> tuple[str, str, str, str]:
-    """Create runs/<name>/{input,output,logs} and return (run_dir, input_dir, output_dir, logs_dir)."""
-    run_dir = os.path.join("runs", run_name)
+def prepare_run_dirs_abs(cfg: dict) -> tuple[str, str, str, str]:
+    """
+    Create absolute <base_dir>/runs/<name>/{input,output,logs} and
+    return (run_dir, input_dir, output_dir, logs_dir).
+    """
+    run_name = cfg["run"]["name"]
+    base_dir = cfg.get("io", {}).get("base_dir")
+    if not base_dir:
+        # Fallback: project root (or current working directory)
+        base_dir = os.path.abspath(ROOT_DIR)
+    run_root = os.path.join(base_dir, "runs")
+    run_dir = os.path.join(run_root, run_name)
     input_dir = os.path.join(run_dir, "input")
     output_dir = os.path.join(run_dir, "output")
     logs_dir = os.path.join(run_dir, "logs")
@@ -70,7 +81,6 @@ def prepare_run_dirs(run_name: str) -> tuple[str, str, str, str]:
     os.makedirs(logs_dir, exist_ok=True)
     return run_dir, input_dir, output_dir, logs_dir
 
-
 def write_resolved_config(cfg: dict, run_dir: str) -> str:
     """Write resolved_config.yaml into the run directory and return its path."""
     resolved_path = os.path.join(run_dir, "resolved_config.yaml")
@@ -78,9 +88,8 @@ def write_resolved_config(cfg: dict, run_dir: str) -> str:
         yaml.safe_dump(cfg, f, sort_keys=False)
     return resolved_path
 
-
 def render_roms_input(cfg: dict, input_dir: str, template_dir: str = "templates", template_name: str = "testmix.in.j2") -> str:
-    """Render ROMS input file from template into runs/<name>/input/testmix.in and return its path."""
+    """Render ROMS input file from template into <abs_input>/testmix.in and return its path."""
     env = Environment(loader=FileSystemLoader(template_dir), autoescape=False)
     tmpl = env.get_template(template_name)
     rendered = tmpl.render(**cfg)
@@ -89,47 +98,49 @@ def render_roms_input(cfg: dict, input_dir: str, template_dir: str = "templates"
         f.write(rendered)
     return out_in_path
 
-
 def prepare_run_from_resolved(cfg: dict) -> dict:
     """
     Prepare a run from an already-resolved config dict.
-    - Creates runs/<name>/{input,output,logs}
+    - Creates absolute <base_dir>/runs/<name>/{input,output,logs}
+    - Updates cfg['io'].input_dir/output_dir with absolute paths
     - Writes resolved_config.yaml
     - Generates grid, ini, bry via tools/*
     - Renders templates/testmix.in.j2
     Returns a dict with paths for convenience.
     """
-    run_name = cfg["run"]["name"]
-    run_dir, input_dir, output_dir, logs_dir = prepare_run_dirs(run_name)
+    # 1) Prepare absolute run directories based on io.base_dir and run.name
+    run_dir, input_dir, output_dir, logs_dir = prepare_run_dirs_abs(cfg)
 
+    # 2) Overwrite io paths with absolute ones so templates produce absolute filenames
     cfg.setdefault("io", {})
     cfg["io"]["input_dir"] = input_dir
     cfg["io"]["output_dir"] = output_dir
 
-    # Inject hashes into _meta
+    # 3) Inject hash into _meta (after paths are set)
     cfg.setdefault("_meta", {})
-    cfg["_meta"]["hash"] = {
-        "exact": config_hash(cfg),
-    }
+    cfg["_meta"]["hash"] = {"exact": config_hash(cfg)}
 
+    # 4) Persist resolved config
     resolved_path = write_resolved_config(cfg, run_dir)
 
-    # Generate artifacts
+    # 5) Generate artifacts
     grid_path = make_grid_from_config(cfg)
     ini_path = make_ini_from_config(cfg)
     bry_path = make_bry_from_config(cfg)
+
+    # 6) Render the ROMS input file (absolute input_dir)
     in_path = render_roms_input(cfg, input_dir)
 
-    # Summary
-    print("Prepared run:")
-    print(f"- run dir:    {run_dir}")
-    print(f"- grid:       {grid_path}")
-    print(f"- ini:        {ini_path}")
-    print(f"- bry:        {bry_path}")
-    print(f"- input:      {in_path}")
-    print(f"- snapshot:   {resolved_path}")
-    print(f"- output dir: {output_dir}")
-    print(f"- logs dir:   {logs_dir}")
+    # # Summary
+    # print("Prepared run:")
+    # print(f"- run dir:    {run_dir}")
+    # print(f"- grid:       {grid_path}")
+    # print(f"- ini:        {ini_path}")
+    # print(f"- bry:        {bry_path}")
+    # print(f"- input:      {in_path}")
+    # print(f"- snapshot:   {resolved_path}")
+    # print(f"- output dir: {output_dir}")
+    # print(f"- logs dir:   {logs_dir}")
 
     return {
         "run_dir": run_dir,
@@ -141,9 +152,8 @@ def prepare_run_from_resolved(cfg: dict) -> dict:
         "ini": ini_path,
         "bry": bry_path,
         "in_file": in_path,
-        "hash_exact": cfg["_meta"]["hash"]["exact"], 
+        "hash_exact": cfg["_meta"]["hash"]["exact"],
     }
-
 
 def main():
     """CLI entry point: resolve baseline + optional override, then prepare the run."""
@@ -152,7 +162,6 @@ def main():
 
     cfg = resolve_config(baseline_path, override_path)
     prepare_run_from_resolved(cfg)
-
 
 if __name__ == "__main__":
     main()
