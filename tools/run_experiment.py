@@ -64,7 +64,6 @@ def run_single_resolved(resolved_cfg_path: str) -> dict:
     status = {
         "state": "running",
         "started_at": started_at,
-        "exec": exec_path,
         "cmd": cmd_str,
     }
     status_file = write_run_status(logs_dir, status)
